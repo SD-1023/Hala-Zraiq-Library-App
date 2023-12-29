@@ -31,7 +31,6 @@ Run Sequelize migrations to create the database tables:
 npx sequelize-cli db:migrate
 3.Run the Application:
 npm start
-------------------------------------------------------------------
 
 
 # API Endpoints
@@ -45,7 +44,6 @@ Optional fields: year, author, pages
 Publisher_id should be the ID of an existing publisher
 ISBN should be unique
 Get a book by ID:
-----------------------------------------------------------------------------
 GET: /books/:id
 Returns book information, publisher details, and comments.
 Example response:
@@ -55,53 +53,52 @@ json
   "publisher": {},
   "comments": []
 }
--------------------------------------------------------
+
 Get all books:
 GET: /books
--------------------------------------------------------
 Update a book:
 PUT: /books/:id.
---------------------------------------------------------
+
 Delete a book:
 DELETE: /books/:id
 Deletes associated comments as well.
-----------------------------------------------------------
 
-Publishers
+# Publishers
 
 Create a new publisher:
 POST: /publishers
 Required fields: name
 Optional fields: country
-------------------------------------------------------------
+
 Get all publishers:
 GET: /publishers
--------------------------------------------------------------
+
+
 Get a publisher by ID:
 GET: /publisher/:id
-------------------------------------------------------------
+
 Delete a publisher:
 DELETE: /publisher/:id
 Does not delete the publisher if it has any published books.
-------------------------------------------------------------
+
 Get books by a publisher:
 GET: /publisher/:id/books
-------------------------------------------------------------
-Comments
+
+# Comments
 Create a new comment on a book:
 POST: /comments
 Required fields: name, comment, book_id
 Optional fields: stars
 Book_id should be the ID of an existing book.
-------------------------------------------------------------
+
 Delete a comment:
 DELETE: /comments/:id
-------------------------------------------------------------
-Top Rated Books
+
+# Top Rated Books
 Get top-rated books:
 GET: /books/top-rated
 Returns the top 10 books sorted by average stars. Comments without stars are ignored.
----------------------------------------------------------------
+
 # Usage
 The application uses Sequelize to interact with the database.
 Endpoints can be tested using tools like Postman or by integrating with a front-end application.

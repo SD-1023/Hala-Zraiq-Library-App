@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",        // Specify ECMAScript target version
+    "module": "commonjs",      // Specify module system (commonjs for Node.js)
+    "outDir": "./dist",        // Specify the output directory for transpiled files
+    "rootDir": "./src",        // Specify the root directory of your source files
+    "strict": true,            // Enable all strict type-checking options
+    "esModuleInterop": true,
+    "skipLibCheck": true,      // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Enforce consistent file naming
+    "resolveJsonModule": true, // Enable importing JSON files as modules
+    "isolatedModules": true,   // Ensure each file is treated as a separate module
+    "noEmit": false , 
+    "types": ["node", "sequelize"]
+    // Do not emit JavaScript files, let ts-node handle execution
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

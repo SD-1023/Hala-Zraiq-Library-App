@@ -10,9 +10,9 @@ interface BookInstance extends Model {
     id: number;
     title: string;
     isbn: string;
-    year?: number;
-    author?: string;
-    pages?: number;
+    year?: number| null;
+    author?: string| null;
+    pages?: number| null;
     publisherId: number;
     publisher?: PublisherInstance;
     comments?: CommentInstance[];
@@ -21,7 +21,7 @@ interface BookInstance extends Model {
   interface PublisherInstance extends Model {
     id: number;
     name: string;
-    country?: string;
+    country?: string | null;
     books?: BookInstance[];
   }
   
@@ -29,7 +29,7 @@ interface BookInstance extends Model {
     id: number;
     name: string;
     comment: string;
-    stars?: number; 
+    stars?: number | null;
     bookId: number;
     book?: BookInstance;
   }

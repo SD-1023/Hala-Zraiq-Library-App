@@ -8,9 +8,9 @@ interface BookInstance extends Model {
     id: number;
     title: string;
     isbn: string;
-    year?: number;
-    author?: string;
-    pages?: number;
+    year?: number| null;
+    author?: string| null;
+    pages?: number| null;
     publisherId: number;
     publisher?: PublisherInstance;
     comments?: CommentInstance[];
@@ -19,7 +19,7 @@ interface BookInstance extends Model {
   interface PublisherInstance extends Model {
     id: number;
     name: string;
-    country?: string;
+    country?: string | null;
     books?: BookInstance[];
   }
   
@@ -27,7 +27,7 @@ interface BookInstance extends Model {
     id: number;
     name: string;
     comment: string;
-    stars?: number;
+    stars?: number| null;
     bookId: number;
     book?: BookInstance;
   }
@@ -38,29 +38,29 @@ class CommentController {
     // Method to create a new comment
     async createComment(req: Request, res: Response) {
       const { name, comment, bookId, stars } = req.body;
-
-        // Verify required fields
-        if (!name || !comment || !bookId) {
-          return res.status(400).json({ error: 'Missing required fields' });
-        }
     
-        try {
-          // Check if the associated book exists
-          const bookExists = await Book.findByPk(bookId);
-          if (!bookExists) {
-            return res.status(404).json({ error: 'Book not found' });
-          }
-    
-          // Create a new comment
-          const newComment = await Comment.create({ name, comment, bookId, stars }) as CommentInstance;
-    
-          res.status(201).json(newComment);
-        } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: 'Internal Server Error' });
-        }
+      // Verify required fields
+      if (!name || !comment || !bookId) {
+        return res.status(400).json({ error: 'Missing required fields' });
       }
-
+    
+      try {
+        // Check if the associated book exists
+        const bookExists = await Book.findByPk(bookId);
+        if (!bookExists) {
+          return res.status(404).json({ error: 'Book not found' });
+        }
+    
+        // Create a new comment
+        const newComment = await Comment.create({ name, comment, bookId, stars }) as CommentInstance;
+    
+        res.status(201).json(newComment);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    }
+    
 
   // Method to delete a comment 
     async deleteComment(req: Request, res: Response) {

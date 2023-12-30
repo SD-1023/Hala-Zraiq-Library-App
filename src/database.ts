@@ -24,14 +24,18 @@ const Book = sequelize.define('Book', {
     year: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: true,
+        defaultValue: null,
     },
     author: {
         type: new DataTypes.STRING(128),
         allowNull: true,
+        defaultValue: null,
+
     },
     pages: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: true,
+        defaultValue: null,
     },
     publisherId: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -56,6 +60,7 @@ const Publisher = sequelize .define ("Publisher",{
     country: {
         type: new DataTypes.STRING(128),
         allowNull: true,
+        defaultValue: null,
     }
 }, {
     tableName: 'publishers',
@@ -79,10 +84,14 @@ const Comment  = sequelize .define ("comment",{
          type: new DataTypes.TEXT(),
          allowNull: false,
      },
-     stars: {
-         type: DataTypes.INTEGER.UNSIGNED,
-         allowNull: true,
-     },
+     
+    stars: {
+            type: DataTypes.INTEGER,
+            allowNull: true, // Allow the field to be nullable
+            defaultValue: null, // Set a default value as null
+        },
+          
+     
      bookId: {
          type: DataTypes.INTEGER.UNSIGNED,
          allowNull: false,

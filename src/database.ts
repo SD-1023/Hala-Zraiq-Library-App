@@ -1,5 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
 
+
+
 const sequelize = new Sequelize('books', 'root', '09877890a', {
   host: 'localhost',
   dialect: 'mysql',
@@ -102,17 +104,58 @@ const Comment  = sequelize .define ("comment",{
 
  });
 
-
-
-
-
-
+ const User = sequelize.define('users', {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    email: {
+      type: new DataTypes.STRING(255),
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: new DataTypes.STRING(255),
+      allowNull: false,
+    },
+  }, {
+    tableName: 'users',
+    timestamps: true,
+  });
+  
+  const Session = sequelize.define('sessions', {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    userId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+    },
+    token: {
+      type: new DataTypes.STRING(255),
+      allowNull: false,
+      unique: true,
+    },
+  }, {
+    tableName: 'sessions',
+    timestamps: true,
+  });
+  
 
 // Define associations
 Publisher.hasMany(Book, { foreignKey: 'publisherId', as: 'books' });
 Comment.belongsTo(Book, { foreignKey: 'bookId', as: 'book' });
 Book.belongsTo(Publisher, { foreignKey: 'publisherId', as: 'publisher' });
 Book.hasMany(Comment, { foreignKey: 'bookId', as: 'comments' });
+User.hasMany(Session, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Session.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Comment, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Comment.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Book, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Book.belongsTo(User, { foreignKey: 'userId' });
 
 
 
@@ -129,4 +172,4 @@ sequelize.authenticate()
     console.error('Unable to connect to the database:', err);
   });
 
-export { sequelize, Book, Publisher, Comment };
+export { sequelize, Book, Publisher, Comment ,User,Session};

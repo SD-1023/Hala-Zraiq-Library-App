@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { sequelize } from '../database';
-import { Book, Publisher, Comment } from '../database'; 
+import { Book, Publisher, Comment ,User} from '../database'; 
 import { Model} from 'sequelize'; 
 import Sequelize from 'sequelize'; 
 
@@ -33,6 +33,11 @@ interface BookInstance extends Model {
     bookId: number;
     book?: BookInstance;
   }
+  interface IUser extends Model {
+    id: number;
+    email: string;
+    password: string;
+}
 
 
 
@@ -42,40 +47,52 @@ class BookController {
   // Method to create a new book
   async createBook(req: Request, res: Response) {
     try {
-      const { title, isbn, publisherId, year, author, pages } = req.body;
+        // Asserting that req has a 'user' property with an 'id'
+        const userReq = req as Request & { user: { id: number } };
 
-      // Verify required fields
-      if (!title || !isbn || !publisherId) {
-        return res.status(400).json({ error: 'Missing required fields' });
-      }
+        const { title, isbn, publisherId, year, author, pages } = req.body;
 
-      // Verify if publisher exists
-      const publisher = await Publisher.findByPk(publisherId);
-      if (!publisher) {
-        return res.status(400).json({ error: 'Invalid publisher ID' });
-      }
+        // Verify required fields
+        if (!title || !isbn || !publisherId) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
 
-      // Verify unique ISBN
-      const existingBook = await Book.findOne({ where: { isbn } });
-      if (existingBook) {
-        return res.status(400).json({ error: 'ISBN already exists' });
-      }
+        // Verify if publisher exists
+        const publisher = await Publisher.findByPk(publisherId);
+        if (!publisher) {
+            return res.status(400).json({ error: 'Invalid publisher ID' });
+        }
 
-      // Create book
-      const newBook = await Book.create({ title, isbn, publisherId, year, author, pages });
-      res.status(201).json(newBook);
+        // Verify unique ISBN
+        const existingBook = await Book.findOne({ where: { isbn } });
+        if (existingBook) {
+            return res.status(400).json({ error: 'ISBN already exists' });
+        }
+
+        // Create book with the user ID from the request
+        const newBook = await Book.create({ 
+            title, 
+            isbn, 
+            publisherId, 
+            year, 
+            author, 
+            pages,
+            userId: userReq.user.id // Use the user's ID from the request
+        });
+
+        res.status(201).json(newBook);
     } catch (error: any) {
-
-      // Check if error is related to data length
-      if (error.original && error.original.code === 'ER_DATA_TOO_LONG') {
-        return res.status(400).json({ error: `Data too long for column. Please check your inputs.` });
-      }
-      // Log the error and send a generic error response
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        // Check if error is related to data length
+        if (error.original && error.original.code === 'ER_DATA_TOO_LONG') {
+            return res.status(400).json({ error: 'Data too long for column. Please check your inputs.' });
+        }
+        // Log the error and send a generic error response
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
+}
+
   
-  }
 
 
 

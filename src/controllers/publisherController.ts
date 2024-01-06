@@ -32,6 +32,11 @@ interface BookInstance extends Model {
     bookId: number;
     book?: BookInstance;
   }
+  interface IUser extends Model {
+    id: number;
+    email: string;
+    password: string;
+}
 
 
 
@@ -40,23 +45,31 @@ interface BookInstance extends Model {
 
     // Method to create a new publisher
     async createPublisher(req: Request, res: Response) {
-      const { name, country } = req.body;
-
-      // Validate required fields
-      if (!name) {
-        return res.status(400).json({ error: 'Name is required' });
-      }
-  
       try {
-        // Create a new publisher
-        const newPublisher = await Publisher.create({ name, country });
-        res.status(201).json(newPublisher);
+          // Using type assertion to bypass TypeScript's type checking
+          const user = (req as any).user as IUser;
+  
+          const { name, country } = req.body;
+  
+          // Validate required fields and that the user is authenticated
+          if (!name || !user.id) {
+              return res.status(400).json({ error: 'Name is required and user must be authenticated' });
+          }
+  
+          // Create a new publisher with the user ID
+          const newPublisher = await Publisher.create({ 
+              name, 
+              country,
+              userId: user.id // Use the authenticated user's ID
+          });
+  
+          res.status(201).json(newPublisher);
       } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
       }
-    }
-
+  }
+  
 
    // Method to get all publishers
     async getAllPublishers(req: Request, res: Response) {

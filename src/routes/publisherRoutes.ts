@@ -1,14 +1,16 @@
 import express from 'express';
+import { authenticateUser } from '../middleware/authMiddleware';
+
 import PublisherController from '../controllers/publisherController';
 
 const publisherRoutes = express.Router();
 
 
-publisherRoutes.post('/', PublisherController.createPublisher);
-publisherRoutes.get('/', PublisherController.getAllPublishers);
-publisherRoutes.get('/:id', PublisherController.getPublisherById);
-publisherRoutes.delete('/:id', PublisherController.deletePublisher);
-publisherRoutes.get('/:id/books', PublisherController.getBooksByPublisher);
+publisherRoutes.post('/',authenticateUser, PublisherController.createPublisher);
+publisherRoutes.get('/', authenticateUser,PublisherController.getAllPublishers);
+publisherRoutes.get('/:id', authenticateUser,PublisherController.getPublisherById);
+publisherRoutes.delete('/:id', authenticateUser,PublisherController.deletePublisher);
+publisherRoutes.get('/:id/books', authenticateUser,PublisherController.getBooksByPublisher);
 
 
 

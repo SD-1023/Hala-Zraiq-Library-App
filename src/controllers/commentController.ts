@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Model } from 'sequelize'; 
-import { Book, Publisher, Comment } from '../database';
+import { Book, User, Comment } from '../database';
+
 
 
 // Interfaces for Sequelize models
@@ -32,35 +33,51 @@ interface BookInstance extends Model {
     book?: BookInstance;
   }
 
+ 
+  interface IUser extends Model {
+    id: number;
+    email: string;
+    password: string;
+}
+
 
 class CommentController {
 
     // Method to create a new comment
     async createComment(req: Request, res: Response) {
-      const { name, comment, bookId, stars } = req.body;
-    
-      // Verify required fields
-      if (!name || !comment || !bookId) {
-        return res.status(400).json({ error: 'Missing required fields' });
-      }
-    
       try {
-        // Check if the associated book exists
-        const bookExists = await Book.findByPk(bookId);
-        if (!bookExists) {
-          return res.status(404).json({ error: 'Book not found' });
-        }
-    
-        // Create a new comment
-        const newComment = await Comment.create({ name, comment, bookId, stars }) as CommentInstance;
-    
-        res.status(201).json(newComment);
+          // Using type assertion to bypass TypeScript's type checking
+          const user = (req as any).user as IUser;
+  
+          const { comment, bookId, stars, name } = req.body; // Include 'name' here
+  
+          // Verify required fields and that the user is authenticated
+          if (!comment || !bookId || !user.id || !name) { // Check for 'name' as well
+              return res.status(400).json({ error: 'Missing required fields or user is not authenticated' });
+          }
+  
+          // Check if the associated book exists
+          const bookExists = await Book.findByPk(bookId);
+          if (!bookExists) {
+              return res.status(404).json({ error: 'Book not found' });
+          }
+  
+          // Create a new comment with the user ID and name
+          const newComment = await Comment.create({ 
+              name,       // Include 'name' in the creation
+              comment, 
+              bookId, 
+              stars, 
+              userId: user.id // Use the authenticated user's ID
+          });
+  
+          res.status(201).json(newComment);
       } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
       }
-    }
-    
+  }
+  
 
   // Method to delete a comment 
     async deleteComment(req: Request, res: Response) {

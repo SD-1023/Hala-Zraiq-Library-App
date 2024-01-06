@@ -2,6 +2,7 @@ import bookRoutes from './routes/bookRoutes';
 import {sequelize} from './database';
 import publisherRoutes from './routes/publisherRoutes';
 import commentRoutes from './routes/commentRoutes';
+import authRoutes from './routes/authRoute' 
 const express = require("express");
 const app = express();
 const port = 3000;
@@ -18,6 +19,7 @@ sequelize.authenticate().then(() => {
 app.use('/books', bookRoutes);
 app.use('/publishers', publisherRoutes);
 app.use('/comments', commentRoutes);
+app.use('/auth', authRoutes);
 
 
 app.listen(port, () => {
